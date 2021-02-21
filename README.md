@@ -1,6 +1,6 @@
-# FirebaseCompose
+# Firebase Compose
 
-FirebaseCompose is an Open Source library for Android that allows you to
+Firebase Compose is an Open Source library for Android that allows you to
 quickly connect a Jetpack Compose app to [Firebase](https://firebase.google.com) APIs.
 
 ## Table of contents
@@ -16,16 +16,16 @@ quickly connect a Jetpack Compose app to [Firebase](https://firebase.google.com)
 
 ## Usage
 
-FirebaseCompose has separate modules for using Firebase Realtime Database and Cloud Firestore.
+Firebase Compose has separate modules for using Firebase Realtime Database and Cloud Firestore.
  To get started, see the individual instructions for each module:
 
-* [FirebaseCompose Firestore](firestore/README.md)
-* [FirebaseCompose Database](database/README.md)
+* [Firebase Compose Firestore](firestore/README.md)
+* [Firebase Compose Database](database/README.md)
 
 ## Installation
 
-FirebaseCompose is published as a collection of libraries separated by the
-Firebase API they target. Each FirebaseCompose library has a transitive
+Firebase Compose is published as a collection of libraries separated by the
+Firebase API they target. Each Firebase Compose library has a transitive
 dependency on the appropriate Firebase SDK so there is no need to include
 those separately in your app.
 
@@ -39,15 +39,15 @@ those separately in your app.
     }
 ```
 
-**Step 2** - In your `app/build.gradle` file add a dependency on one of the FirebaseCompose
+**Step 2** - In your `app/build.gradle` file add a dependency on one of the Firebase Compose
 libraries.
 
 ```groovy
 dependencies {
-    // FirebaseCompose for Firebase Realtime Database
+    // Firebase Compose for Firebase Realtime Database
     implementation 'com.github.rosariopfernandes:TODO'
 
-    // FirebaseCompose for Cloud Firestore
+    // Firebase Compose for Cloud Firestore
     implementation 'com.github.rosariopfernandes:TODO'
 }
 ```
@@ -58,7 +58,7 @@ After the project is synchronized, we're ready to start using Firebase functiona
 
 ### Compatibility with Firebase libraries
 
-FirebaseCompose libraries have the following transitive dependencies on the Firebase SDK:
+Firebase Compose libraries have the following transitive dependencies on the Firebase SDK:
 ```
 firebase-ui-database
 |--- com.google.firebase:firebase-database-ktx
