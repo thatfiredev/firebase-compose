@@ -1,5 +1,7 @@
-package io.github.rosariopfernandes.firebasecompose
+package io.github.rosariopfernandes.firebasecompose.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -31,7 +33,7 @@ class MainActivity : AppCompatActivity() {
             FirebaseComposeTheme {
                 Scaffold(
                         topBar = { Toolbar() },
-                        bodyContent = { SnackList() }
+                        bodyContent = { SnackList(this@MainActivity) }
                 )
             }
         }
@@ -53,12 +55,14 @@ fun Toolbar() {
 @ExperimentalFoundationApi
 @Composable
 fun SnackList(
-
+    context: Context
 ) {
     LazyVerticalGrid(cells = GridCells.Fixed(2), content = {
         items(getItems()) { snack ->
             SnackItem(snack = snack, onSnackClick = {
                 // TODO
+                val intent = Intent(context, DetailActivity::class.java)
+                context.startActivity(intent)
             })
         }
     })
