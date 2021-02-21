@@ -1,2 +1,3 @@
 rootProject.name = "Firebase Compose"
 include ':demo'
+include ':firestore'
