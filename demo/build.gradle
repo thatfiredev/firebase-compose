@@ -36,7 +36,6 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
-        kotlinCompilerVersion '1.4.30'
     }
 }
 
@@ -52,6 +51,10 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0'
 
+    // Firebase Compose
+    implementation project(':firestore')
+
+    // Helper libraries for UI
     implementation "dev.chrisbanes.accompanist:accompanist-glide:0.5.1"
     implementation "dev.chrisbanes.accompanist:accompanist-insets:0.5.1"
 

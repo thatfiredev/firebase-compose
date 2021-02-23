@@ -5,5 +5,5 @@ data class Snack(
         val name: String = "Donut",
         val imageUrl: String = "",
         val price: Long = 100L,
-        val tagline: String = "Some Donut",
+        val tagline: String = "Dessert",
 )

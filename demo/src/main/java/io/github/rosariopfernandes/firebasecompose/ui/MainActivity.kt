@@ -7,9 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
@@ -24,6 +22,7 @@ import com.bumptech.glide.request.RequestOptions
 import dev.chrisbanes.accompanist.glide.GlideImage
 import io.github.rosariopfernandes.firebasecompose.model.Snack
 import io.github.rosariopfernandes.firebasecompose.ui.theme.FirebaseComposeTheme
+import io.github.rosariopfernandes.firebasecompose.ui.theme.purple500
 
 class MainActivity : AppCompatActivity() {
     @ExperimentalFoundationApi
@@ -32,8 +31,10 @@ class MainActivity : AppCompatActivity() {
         setContent {
             FirebaseComposeTheme {
                 Scaffold(
-                        topBar = { Toolbar() },
-                        bodyContent = { SnackList(this@MainActivity) }
+                    topBar = { Toolbar() },
+                    bodyContent = {
+
+                    }
                 )
             }
         }
@@ -60,7 +61,7 @@ fun SnackList(
     LazyVerticalGrid(cells = GridCells.Fixed(2), content = {
         items(getItems()) { snack ->
             SnackItem(snack = snack, onSnackClick = {
-                // TODO
+                // TODO: pass snack key
                 val intent = Intent(context, DetailActivity::class.java)
                 context.startActivity(intent)
             })
@@ -85,8 +86,8 @@ fun SnackItem(
         Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                        .clickable(onClick = { onSnackClick(snack.id) })
-                        .padding(8.dp)
+                    .clickable(onClick = { onSnackClick(snack.id) })
+                    .padding(8.dp)
         ) {
             GlideImage(
                     data = snack.imageUrl,
@@ -108,6 +109,32 @@ fun SnackItem(
     }
 }
 
+@Composable
+fun LoadingBar() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth().fillMaxHeight()
+    ) {
+        CircularProgressIndicator(modifier = Modifier.preferredWidth(64.dp).preferredHeight(64.dp))
+    }
+}
+
+@Composable
+fun OnlyText(
+    title: String,
+    message: String
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text(text = title, style = MaterialTheme.typography.h4, color = purple500)
+        Text(text = message)
+    }
+}
+
 private fun getItems() = listOf(
         Snack(id = 1, name = "Cupcake", imageUrl = "https://upload.wikimedia.org/wikipedia/commons/5/56/Chocolate_cupcakes.jpg"),
         Snack(id = 2, name = "Donut", imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Glazed-Donut.jpg/640px-Glazed-Donut.jpg"),
@@ -123,6 +150,6 @@ private fun getItems() = listOf(
 @Composable
 fun DefaultPreview() {
     FirebaseComposeTheme {
-        SnackItem(snack = Snack(), onSnackClick = { /*TODO*/ })
+        LoadingBar()
     }
 }
