@@ -59,7 +59,7 @@ query.addSnapshotListener { snapshot, e ->
 If you're displaying a list of data, you likely want to bind the `Snack` objects to one of the
 `Lazy` Composables, such as `LazyColumn` or `LazyRow`.
 
-Firebase Compose can help you do this (almost) automatically!
+Firebase Compose can help you do this instantly!
 
 
 ### Using the `CollectionState`
