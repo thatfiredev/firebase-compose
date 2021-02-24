@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Firebase Compose</string>
+    <string name="label_back">Navigate Up</string>
+    <string name="detail_header">Details</string>
+    <string name="detail_placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud..</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="ingredients_list">Vanilla, Almond Flour, Eggs, Butter, Cream, Sugar</string>
+
+    <string name="title_error">An error occured :(</string>
+    <string name="title_empty">No Snacks :/</string>
+    <string name="message_empty">You havent added any snacks yet. Press the top right button to add some snacks.</string>
 </resources>
