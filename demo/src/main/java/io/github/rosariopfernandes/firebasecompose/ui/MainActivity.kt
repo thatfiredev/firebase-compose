@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
             FirebaseComposeTheme {
                 Scaffold(
                         topBar = { Toolbar(this@MainActivity) },
-                        bodyContent = {
+                        content = {
                             val query = Firebase.firestore.collection(FIRESTORE_COLLECTION)
                             val (result) = remember { collectionStateOf (query, this) }
 
@@ -151,7 +151,7 @@ fun SnackItem(
             GlideImage(
                     data = snack.imageUrl,
                     contentDescription = null,
-                    modifier = Modifier.preferredSize(120.dp),
+                    modifier = Modifier.size(120.dp),
                     requestBuilder = {
                         val options = RequestOptions()
                         options.circleCrop()
