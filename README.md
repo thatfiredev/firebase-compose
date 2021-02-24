@@ -70,8 +70,6 @@ firebasecompose-firestore
 ## Sample app
 A sample app is available in the [demo](/demo/) directory.
 
-Coming Soon.
-
 ## Contributing
 
 Anyone and everyone is welcome to contribute. Please take a moment to
