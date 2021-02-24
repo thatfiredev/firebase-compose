@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.rosariopfernandes.firebasecompose">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FirebaseCompose">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.FirebaseCompose.NoActionBar">
             <intent-filter>
@@ -19,6 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.DetailActivity"
+            android:label="@string/detail_header"
+            android:theme="@style/Theme.FirebaseCompose.NoActionBar"/>
     </application>
 
 </manifest>
