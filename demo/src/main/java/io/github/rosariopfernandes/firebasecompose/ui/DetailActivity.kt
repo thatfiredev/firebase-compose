@@ -24,12 +24,19 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import dev.chrisbanes.accompanist.glide.GlideImage
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 import io.github.rosariopfernandes.firebasecompose.R
+import io.github.rosariopfernandes.firebasecompose.firestore.FirestoreDocument
+import io.github.rosariopfernandes.firebasecompose.firestore.documentStateOf
 import io.github.rosariopfernandes.firebasecompose.model.Snack
+import io.github.rosariopfernandes.firebasecompose.ui.components.LoadingBar
+import io.github.rosariopfernandes.firebasecompose.ui.components.OnlyText
 import io.github.rosariopfernandes.firebasecompose.ui.theme.FirebaseComposeTheme
 import io.github.rosariopfernandes.firebasecompose.ui.theme.purple200
 import io.github.rosariopfernandes.firebasecompose.ui.theme.purple500
@@ -52,10 +59,27 @@ class DetailActivity : AppCompatActivity() {
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val snackId = intent.extras!!.getString("snackId")!!
         setContent {
             FirebaseComposeTheme {
                 ProvideWindowInsets {
-                    SnackDetail(snackId = 1, upPress = { finish() })
+                    val docRef = Firebase.firestore.collection("snacks").document(snackId)
+                    val (result) = remember { documentStateOf(docRef, this@DetailActivity) }
+                    when (result) {
+                        is FirestoreDocument.Loading -> {
+                            LoadingBar()
+                        }
+                        is FirestoreDocument.Error -> {
+                            val exception = result.exception
+                            OnlyText(title = stringResource(id = R.string.title_error),
+                                    message = exception.message ?: "")
+                        }
+                        is FirestoreDocument.Snapshot -> {
+                            val snack = result.snapshot.toObject<Snack>()!!
+                            SnackDetail(snack = snack, upPress = { finish() })
+                        }
+                    }
                 }
             }
         }
@@ -64,11 +88,9 @@ class DetailActivity : AppCompatActivity() {
 
 @Composable
 fun SnackDetail(
-    snackId: Long,
+    snack: Snack,
     upPress: () -> Unit
 ) {
-    val snack = remember(snackId) { getItems()[0] }
-
     Box(Modifier.fillMaxSize()) {
         val scroll = rememberScrollState(0f)
         Header()
@@ -83,9 +105,9 @@ fun SnackDetail(
 private fun Header() {
     Spacer(
         modifier = Modifier
-            .preferredHeight(280.dp)
-            .fillMaxWidth()
-            .background(Brush.horizontalGradient(listOf(purple200, purple500)))
+                .preferredHeight(280.dp)
+                .fillMaxWidth()
+                .background(Brush.horizontalGradient(listOf(purple200, purple500)))
     )
 }
 
@@ -94,13 +116,13 @@ private fun Up(upPress: () -> Unit) {
     IconButton(
         onClick = upPress,
         modifier = Modifier
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp, vertical = 10.dp)
-            .preferredSize(36.dp)
-            .background(
-                color = purple200,
-                shape = CircleShape
-            )
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 10.dp)
+                .preferredSize(36.dp)
+                .background(
+                        color = purple200,
+                        shape = CircleShape
+                )
     ) {
         Icon(
             imageVector = Icons.Outlined.ArrowBack,
@@ -117,9 +139,9 @@ private fun Body(
     Column {
         Spacer(
             modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .preferredHeight(MinTitleOffset)
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .preferredHeight(MinTitleOffset)
         )
         Column(
             modifier = Modifier.verticalScroll(scroll)
@@ -165,9 +187,9 @@ private fun Body(
 
                     Spacer(
                         modifier = Modifier
-                            .padding(bottom = BottomBarHeight)
-                            .navigationBarsPadding(left = false, right = false)
-                            .preferredHeight(8.dp)
+                                .padding(bottom = BottomBarHeight)
+                                .navigationBarsPadding(left = false, right = false)
+                                .preferredHeight(8.dp)
                     )
                 }
             }
@@ -183,10 +205,10 @@ private fun Title(snack: Snack, scroll: Float) {
     Column(
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier
-            .preferredHeightIn(min = TitleHeight)
-            .statusBarsPadding()
-            .graphicsLayer { translationY = offset }
-            .background(color = Color.White)
+                .preferredHeightIn(min = TitleHeight)
+                .statusBarsPadding()
+                .graphicsLayer { translationY = offset }
+                .background(color = Color.White)
     ) {
         Spacer(Modifier.preferredHeight(16.dp))
         Text(
