@@ -8,8 +8,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 
@@ -22,15 +20,12 @@ import com.google.firebase.firestore.Query
  * @see [State]
  * @see [collectionStateOf]
  */
-interface CollectionState : State<List<DocumentSnapshot>>, LifecycleObserver {
-    override val value: List<DocumentSnapshot>
-    val error: FirebaseFirestoreException?
-    val loading: Boolean
+interface CollectionState : State<FirestoreCollection>, LifecycleObserver {
+    override val value: FirestoreCollection
     fun startListening()
     fun stopListening()
-    operator fun component1(): List<DocumentSnapshot>
-    operator fun component2(): FirebaseFirestoreException?
-    operator fun component3(): Boolean
+
+    operator fun component1(): FirestoreCollection
 }
 
 /**
@@ -50,18 +45,10 @@ fun collectionStateOf(
     lifecycleOwner: LifecycleOwner? = null
 ) = object : CollectionState {
     private var listener: ListenerRegistration? = null
-    private var documentsState: List<DocumentSnapshot> by mutableStateOf(listOf())
-    private var errorState: FirebaseFirestoreException? by mutableStateOf(null)
-    private var loadingState: Boolean by mutableStateOf(true)
+    private var valueState: FirestoreCollection by mutableStateOf(FirestoreCollection.Loading)
 
-    override val error: FirebaseFirestoreException?
-        get() = errorState
-
-    override val value: List<DocumentSnapshot>
-        get() = documentsState
-
-    override val loading: Boolean
-        get() = loadingState
+    override val value: FirestoreCollection
+        get() = valueState
 
     init {
         lifecycleOwner?.lifecycle?.addObserver(this)
@@ -71,9 +58,12 @@ fun collectionStateOf(
     override fun startListening() {
         if (listener == null) {
             listener = query.addSnapshotListener { value, error ->
-                loadingState = false
-                value?.let { documentsState = it.documents }
-                error?.let { errorState = it }
+                value?.let { querySnapshot ->
+                    valueState = FirestoreCollection.Snapshot(querySnapshot.documents)
+                }
+                error?.let { exception ->
+                    valueState = FirestoreCollection.Error(exception)
+                }
             }
         }
     }
@@ -83,10 +73,6 @@ fun collectionStateOf(
         listener?.remove()
     }
 
-    override fun component1() = value
-
-    override fun component2() = error
-
-    override fun component3() = loading
+    override fun component1(): FirestoreCollection = value
 }
 
