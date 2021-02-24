@@ -14,14 +14,11 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.firestore.DocumentSnapshot
@@ -33,8 +30,9 @@ import io.github.rosariopfernandes.firebasecompose.R
 import io.github.rosariopfernandes.firebasecompose.firestore.FirestoreCollection
 import io.github.rosariopfernandes.firebasecompose.firestore.collectionStateOf
 import io.github.rosariopfernandes.firebasecompose.model.Snack
+import io.github.rosariopfernandes.firebasecompose.ui.components.LoadingBar
+import io.github.rosariopfernandes.firebasecompose.ui.components.OnlyText
 import io.github.rosariopfernandes.firebasecompose.ui.theme.FirebaseComposeTheme
-import io.github.rosariopfernandes.firebasecompose.ui.theme.purple500
 
 const val FIRESTORE_COLLECTION = "snacks"
 
@@ -47,7 +45,30 @@ class MainActivity : AppCompatActivity() {
                 Scaffold(
                         topBar = { Toolbar(this@MainActivity) },
                         bodyContent = {
+                            val query = Firebase.firestore.collection(FIRESTORE_COLLECTION)
+                            val (result) = remember { collectionStateOf (query, this) }
 
+                            when (result) {
+                                is FirestoreCollection.Error -> {
+                                    OnlyText(
+                                            title = stringResource(R.string.title_error),
+                                            message = result.exception.message ?: ""
+                                    )
+                                }
+                                is FirestoreCollection.Loading -> {
+                                    LoadingBar()
+                                }
+                                is FirestoreCollection.Snapshot -> {
+                                    if (result.list.isEmpty()) {
+                                        OnlyText(
+                                                title = stringResource(id = R.string.title_empty),
+                                                message = stringResource(id = R.string.message_empty)
+                                        )
+                                    } else {
+                                        SnackList(context = this@MainActivity, items = result.list)
+                                    }
+                                }
+                            }
                         }
                 )
             }
@@ -103,9 +124,8 @@ fun SnackList(
         items(items) { snapshot ->
             val snack = snapshot.toObject<Snack>()!!
             SnackItem(snack = snack, onSnackClick = {
-                // TODO: pass snack key to the next activity
-
                 val intent = Intent(context, DetailActivity::class.java)
+                intent.putExtra("snackId", snapshot.id)
                 context.startActivity(intent)
             })
         }
@@ -145,41 +165,5 @@ fun SnackItem(
                     modifier = Modifier.padding(top = 8.dp)
             )
         }
-    }
-}
-
-@Composable
-fun LoadingBar() {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-    ) {
-        CircularProgressIndicator(modifier = Modifier.preferredWidth(64.dp).preferredHeight(64.dp))
-    }
-}
-
-@Composable
-fun OnlyText(
-    title: String,
-    message: String
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text(text = title, style = MaterialTheme.typography.h4, color = purple500)
-        Text(text = message, textAlign = TextAlign.Center)
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    FirebaseComposeTheme {
-        LoadingBar()
     }
 }
