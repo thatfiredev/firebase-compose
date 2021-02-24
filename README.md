@@ -45,10 +45,10 @@ libraries.
 ```groovy
 dependencies {
     // Firebase Compose for Firebase Realtime Database
-    implementation 'com.github.rosariopfernandes:TODO'
+    implementation 'com.github.rosariopfernandes.firebasecompose:database:1.0.0-beta01'
 
     // Firebase Compose for Cloud Firestore
-    implementation 'com.github.rosariopfernandes:TODO'
+    implementation 'com.github.rosariopfernandes.firebasecompose:firestore:1.0.0-beta01'
 }
 ```
 
@@ -60,14 +60,15 @@ After the project is synchronized, we're ready to start using Firebase functiona
 
 Firebase Compose libraries have the following transitive dependencies on the Firebase SDK:
 ```
-firebase-ui-database
+firebasecompose-database
 |--- com.google.firebase:firebase-database-ktx
 
-firebase-ui-firestore
+firebasecompose-firestore
 |--- com.google.firebase:firebase-firestore-ktx
 ```
 
 ## Sample app
+A sample app is available in the [demo](/demo/) directory.
 
 Coming Soon.
 
