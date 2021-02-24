@@ -9,8 +9,6 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 
 /**
@@ -22,15 +20,11 @@ import com.google.firebase.firestore.ListenerRegistration
  * @see [State]
  * @see [documentStateOf]
  */
-interface DocumentState : State<DocumentSnapshot?>, LifecycleObserver {
-    override val value: DocumentSnapshot?
-    val error: FirebaseFirestoreException?
-    val loading: Boolean
+interface DocumentState : State<FirestoreDocument>, LifecycleObserver {
+    override val value: FirestoreDocument
     fun startListening()
     fun stopListening()
-    operator fun component1(): DocumentSnapshot?
-    operator fun component2(): FirebaseFirestoreException?
-    operator fun component3(): Boolean
+    operator fun component1(): FirestoreDocument
 }
 
 /**
@@ -50,18 +44,10 @@ fun documentStateOf(
     lifecycleOwner: LifecycleOwner? = null
 ) = object : DocumentState {
     private var listener: ListenerRegistration? = null
-    private var snapshotState: DocumentSnapshot? by mutableStateOf(null)
-    private var errorState: FirebaseFirestoreException? by mutableStateOf(null)
-    private var loadingState: Boolean by mutableStateOf(true)
+    private var snapshotState: FirestoreDocument by mutableStateOf(FirestoreDocument.Loading)
 
-    override val error: FirebaseFirestoreException?
-        get() = errorState
-
-    override val value: DocumentSnapshot?
+    override val value: FirestoreDocument
         get() = snapshotState
-
-    override val loading: Boolean
-        get() = loadingState
 
     init {
         lifecycleOwner?.lifecycle?.addObserver(this)
@@ -71,9 +57,12 @@ fun documentStateOf(
     override fun startListening() {
         if (listener == null) {
             listener = documentReference.addSnapshotListener { value, error ->
-                loadingState = false
-                value?.let { snapshotState = it }
-                error?.let { errorState = it }
+                value?.let { snapshot ->
+                    snapshotState = FirestoreDocument.Snapshot(snapshot)
+                }
+                error?.let {  exception ->
+                    snapshotState = FirestoreDocument.Error(exception)
+                }
             }
         }
     }
@@ -84,9 +73,5 @@ fun documentStateOf(
     }
 
     override fun component1() = value
-
-    override fun component2() = error
-
-    override fun component3() = loading
 }
 
