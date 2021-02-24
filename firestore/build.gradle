@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
+    id 'maven-publish'
 }
 
 android {
@@ -11,7 +12,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0-beta01"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -36,6 +37,33 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
+    }
+
+    afterEvaluate {
+        publishing {
+            publications {
+                // Creates a Maven publication called "release".
+                release(MavenPublication) {
+                    // Applies the component for the release build variant.
+                    from components.release
+
+                    // You can then customize attributes of the publication as shown below.
+                    groupId = 'com.github.rosariopfernandes'
+                    artifactId = 'firestore'
+                    version = '1.0.0-beta01'
+                }
+                // Creates a Maven publication called “debug”.
+                debug(MavenPublication) {
+                    // Applies the component for the debug build variant.
+                    from components.debug
+
+                    groupId = 'com.github.rosariopfernandes'
+                    artifactId = 'firestore-debug'
+                    version = '1.0.0-beta01'
+                }
+            }
+        }
+
     }
 }
 
