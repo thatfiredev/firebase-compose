@@ -24,15 +24,11 @@ import com.google.firebase.database.ValueEventListener
  * @see [State]
  * @see [databaseListRefStateOf]
  */
-interface DatabaseListRefState : State<List<DataSnapshot>>, LifecycleObserver {
-    override val value: List<DataSnapshot>
-    val error: DatabaseError?
-    val loading: Boolean
+interface DatabaseListRefState : State<RTDBDataList>, LifecycleObserver {
+    override val value: RTDBDataList
     fun startListening()
     fun stopListening()
-    operator fun component1(): List<DataSnapshot>
-    operator fun component2(): DatabaseError?
-    operator fun component3(): Boolean
+    operator fun component1(): RTDBDataList
 }
 
 /**
@@ -52,18 +48,10 @@ fun databaseListRefStateOf(
     lifecycleOwner: LifecycleOwner? = null
 ) = object : DatabaseListRefState {
     private var listener: ValueEventListener? = null
-    private var dataState: List<DataSnapshot> by mutableStateOf(listOf())
-    private var errorState: DatabaseError? by mutableStateOf(null)
-    private var loadingState: Boolean by mutableStateOf(true)
+    private var dataState: RTDBDataList by mutableStateOf(RTDBDataList.Loading)
 
-    override val error: DatabaseError?
-        get() = errorState
-
-    override val value: List<DataSnapshot>
+    override val value: RTDBDataList
         get() = dataState
-
-    override val loading: Boolean
-        get() = loadingState
 
     init {
         lifecycleOwner?.lifecycle?.addObserver(this)
@@ -74,13 +62,12 @@ fun databaseListRefStateOf(
         if (listener == null) {
             listener = databaseRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    loadingState = false
-                    dataState = snapshot.children.toList()
+                    val list = snapshot.children.toList()
+                    dataState = RTDBDataList.SnapshotList(list)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    loadingState = false
-                    errorState = error
+                    dataState = RTDBDataList.Error(error)
                 }
             })
         }
@@ -92,8 +79,4 @@ fun databaseListRefStateOf(
     }
 
     override fun component1() = value
-
-    override fun component2() = error
-
-    override fun component3() = loading
 }

@@ -23,15 +23,11 @@ import com.google.firebase.database.ValueEventListener
  * @see [State]
  * @see [databaseRefStateOf]
  */
-interface DatabaseRefState : State<DataSnapshot?>, LifecycleObserver {
-    override val value: DataSnapshot?
-    val error: DatabaseError?
-    val loading: Boolean
+interface DatabaseRefState : State<RTDBData>, LifecycleObserver {
+    override val value: RTDBData
     fun startListening()
     fun stopListening()
-    operator fun component1(): DataSnapshot?
-    operator fun component2(): DatabaseError?
-    operator fun component3(): Boolean
+    operator fun component1(): RTDBData
 }
 
 /**
@@ -51,18 +47,10 @@ fun databaseRefStateOf(
     lifecycleOwner: LifecycleOwner? = null
 ) = object : DatabaseRefState {
     private var listener: ValueEventListener? = null
-    private var dataState: DataSnapshot? by mutableStateOf(null)
-    private var errorState: DatabaseError? by mutableStateOf(null)
-    private var loadingState: Boolean by mutableStateOf(true)
+    private var dataState: RTDBData by mutableStateOf(RTDBData.Loading)
 
-    override val error: DatabaseError?
-        get() = errorState
-
-    override val value: DataSnapshot?
+    override val value: RTDBData
         get() = dataState
-
-    override val loading: Boolean
-        get() = loadingState
 
     init {
         lifecycleOwner?.lifecycle?.addObserver(this)
@@ -73,13 +61,11 @@ fun databaseRefStateOf(
         if (listener == null) {
             listener = databaseRef.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    loadingState = false
-                    dataState = snapshot
+                    dataState = RTDBData.Snapshot(snapshot)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    loadingState = false
-                    errorState = error
+                    dataState = RTDBData.Error(error)
                 }
             })
         }
@@ -91,8 +77,4 @@ fun databaseRefStateOf(
     }
 
     override fun component1() = value
-
-    override fun component2() = error
-
-    override fun component3() = loading
 }
