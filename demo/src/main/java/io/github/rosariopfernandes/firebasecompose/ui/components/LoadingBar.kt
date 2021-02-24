@@ -14,6 +14,6 @@ fun LoadingBar() {
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth().fillMaxHeight()
     ) {
-        CircularProgressIndicator(modifier = Modifier.preferredWidth(64.dp).preferredHeight(64.dp))
+        CircularProgressIndicator(modifier = Modifier.width(64.dp).height(64.dp))
     }
 }

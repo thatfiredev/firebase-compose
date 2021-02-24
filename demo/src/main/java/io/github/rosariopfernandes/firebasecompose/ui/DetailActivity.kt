@@ -92,7 +92,7 @@ fun SnackDetail(
     upPress: () -> Unit
 ) {
     Box(Modifier.fillMaxSize()) {
-        val scroll = rememberScrollState(0f)
+        val scroll = rememberScrollState(0)
         Header()
         Body(scroll)
         Title(snack, scroll.value)
@@ -105,7 +105,7 @@ fun SnackDetail(
 private fun Header() {
     Spacer(
         modifier = Modifier
-                .preferredHeight(280.dp)
+                .height(280.dp)
                 .fillMaxWidth()
                 .background(Brush.horizontalGradient(listOf(purple200, purple500)))
     )
@@ -118,7 +118,7 @@ private fun Up(upPress: () -> Unit) {
         modifier = Modifier
                 .statusBarsPadding()
                 .padding(horizontal = 16.dp, vertical = 10.dp)
-                .preferredSize(36.dp)
+                .size(36.dp)
                 .background(
                         color = purple200,
                         shape = CircleShape
@@ -141,25 +141,25 @@ private fun Body(
             modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .preferredHeight(MinTitleOffset)
+                    .height(MinTitleOffset)
         )
         Column(
             modifier = Modifier.verticalScroll(scroll)
         ) {
-            Spacer(Modifier.preferredHeight(GradientScroll))
+            Spacer(Modifier.height(GradientScroll))
             Surface(Modifier.fillMaxWidth()) {
                 Column {
-                    Spacer(Modifier.preferredHeight(ImageOverlap))
-                    Spacer(Modifier.preferredHeight(TitleHeight))
+                    Spacer(Modifier.height(ImageOverlap))
+                    Spacer(Modifier.height(TitleHeight))
 
-                    Spacer(Modifier.preferredHeight(16.dp))
+                    Spacer(Modifier.height(16.dp))
                     Text(
                         text = stringResource(R.string.detail_header),
                         style = MaterialTheme.typography.overline,
                         color = Color.DarkGray,
                         modifier = HzPadding
                     )
-                    Spacer(Modifier.preferredHeight(4.dp))
+                    Spacer(Modifier.height(4.dp))
                     Text(
                         text = stringResource(R.string.detail_placeholder),
                         style = MaterialTheme.typography.body1,
@@ -167,14 +167,14 @@ private fun Body(
                         modifier = HzPadding
                     )
 
-                    Spacer(Modifier.preferredHeight(40.dp))
+                    Spacer(Modifier.height(40.dp))
                     Text(
                         text = stringResource(R.string.ingredients),
                         style = MaterialTheme.typography.overline,
                         color = Color.DarkGray,
                         modifier = HzPadding
                     )
-                    Spacer(Modifier.preferredHeight(4.dp))
+                    Spacer(Modifier.height(4.dp))
                     Text(
                         text = stringResource(R.string.ingredients_list),
                         style = MaterialTheme.typography.body1,
@@ -182,14 +182,14 @@ private fun Body(
                         modifier = HzPadding
                     )
 
-                    Spacer(Modifier.preferredHeight(16.dp))
+                    Spacer(Modifier.height(16.dp))
                     Divider( color = Color.LightGray, thickness = 1.dp, startIndent = 0.dp )
 
                     Spacer(
                         modifier = Modifier
                                 .padding(bottom = BottomBarHeight)
                                 .navigationBarsPadding(left = false, right = false)
-                                .preferredHeight(8.dp)
+                                .height(8.dp)
                     )
                 }
             }
@@ -198,19 +198,19 @@ private fun Body(
 }
 
 @Composable
-private fun Title(snack: Snack, scroll: Float) {
+private fun Title(snack: Snack, scroll: Int) {
     val maxOffset = with(LocalDensity.current) { MaxTitleOffset.toPx() }
     val minOffset = with(LocalDensity.current) { MinTitleOffset.toPx() }
     val offset = (maxOffset - scroll).coerceAtLeast(minOffset)
     Column(
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier
-                .preferredHeightIn(min = TitleHeight)
+                .heightIn(min = TitleHeight)
                 .statusBarsPadding()
                 .graphicsLayer { translationY = offset }
                 .background(color = Color.White)
     ) {
-        Spacer(Modifier.preferredHeight(16.dp))
+        Spacer(Modifier.height(16.dp))
         Text(
             text = snack.name,
             style = MaterialTheme.typography.h4,
@@ -224,7 +224,7 @@ private fun Title(snack: Snack, scroll: Float) {
             color = Color.DarkGray,
             modifier = HzPadding
         )
-        Spacer(Modifier.preferredHeight(4.dp))
+        Spacer(Modifier.height(4.dp))
         Text(
             text = "${snack.price} MZN",
             style = MaterialTheme.typography.h6,
@@ -232,7 +232,7 @@ private fun Title(snack: Snack, scroll: Float) {
             modifier = HzPadding
         )
 
-        Spacer(Modifier.preferredHeight(8.dp))
+        Spacer(Modifier.height(8.dp))
         Divider( color = Color.LightGray, thickness = 1.dp, startIndent = 0.dp )
     }
 }
@@ -240,7 +240,7 @@ private fun Title(snack: Snack, scroll: Float) {
 @Composable
 private fun Image(
     imageUrl: String,
-    scroll: Float
+    scroll: Int
 ) {
     val collapseRange = with(LocalDensity.current) { (MaxTitleOffset - MinTitleOffset).toPx() }
     val collapseFraction = (scroll / collapseRange).coerceIn(0f, 1f)
@@ -293,14 +293,3 @@ private fun CollapsingImageLayout(
         }
     }
 }
-
-private fun getItems() = listOf(
-        Snack(id = 1, name = "Cupcake", imageUrl = "https://upload.wikimedia.org/wikipedia/commons/5/56/Chocolate_cupcakes.jpg"),
-        Snack(id = 2, name = "Donut", imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Glazed-Donut.jpg/640px-Glazed-Donut.jpg"),
-        Snack(id = 3, name = "Eclair", imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Ginger_Spice_Eclair_-_39843168741.jpg/640px-Ginger_Spice_Eclair_-_39843168741.jpg"),
-        Snack(id = 4, name = "Froyo", imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/ICE_CREAM_%28FROYO%29_01.jpg/640px-ICE_CREAM_%28FROYO%29_01.jpg"),
-        Snack(id = 5, name = "Gingerbread", imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Gingerbread_men.jpg/401px-Gingerbread_men.jpg"),
-        Snack(id = 6, name = "Honey", imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Bienenwabe_mit_Eiern_und_Brut_5.jpg/640px-Bienenwabe_mit_Eiern_und_Brut_5.jpg"),
-        Snack(id = 7, name = "Ice Cream", imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Bananas_Foster_Ice_Cream_at_Little_Giant_Ice_Cream.jpg/480px-Bananas_Foster_Ice_Cream_at_Little_Giant_Ice_Cream.jpg"),
-        Snack(id = 8, name = "Jelly Beans", imageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/JellyBellyBeans.jpg/616px-JellyBellyBeans.jpg")
-)
